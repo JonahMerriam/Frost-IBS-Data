@@ -1,0 +1,17 @@
+---
+title: "Frost _IBS_Data_Analysis.Rmd"
+author: "Jonah Merriam"
+date: "8/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The goal of this Rmd file is to create a reproducible set of code that will allow future people to repeat this analysis on 16S metagenomic data received from MRDNA. 
+
+
+
+
+
