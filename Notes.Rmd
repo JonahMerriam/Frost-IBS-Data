@@ -1,0 +1,16 @@
+---
+title: "Notes.Rmd"
+author: "Jonah Merriam"
+date: "8/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The data in the original excel file has a lot of weird aspects. One of these is spaces in between the columns of data which will be easier to remove in excel. Another thing is that importing the data from excel will create a mix of numeric and character based rows for the data which will have to be swapped around. 
+
+
+
+

@@ -1,0 +1,18 @@
+---
+title: "Practice_Workspace.Rmd"
+author: "Jonah Merriam"
+date: "8/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Loading in Data}
+
+```
+
+
+
+
