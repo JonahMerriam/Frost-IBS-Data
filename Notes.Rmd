@@ -11,6 +11,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The data in the original excel file has a lot of weird aspects. One of these is spaces in between the columns of data which will be easier to remove in excel. Another thing is that importing the data from excel will create a mix of numeric and character based rows for the data which will have to be swapped around. 
 
+Before reading the data into R I cleaned the excel sheet up so that there were no spaces in between columns and that the column with the name of whatever level was being looked at was named that (ex: phylum)
 
+Cleaned up the data: switch zeros to NA, remove all rows with only NA, standardized the naming of column headers, made all character columns in lowercase only
 
+```{r Working with long format data}
+long_ibs<-read_excel(here("Frost IBS Data", "Frost IBS Long form data.xlsx")) %>% clean_names() %>% mutate(name = str_to_lower(name))
+```
+
+```{r Phylum Long Graph work}
+ggplot(Phylum_Long, aes(y=phylum_relative_abundance,fill=phylum,x=name))+ geom_bar(stat='identity',color="black",aes(fill=phylum))+
+    scale_fill_manual(values=tax_color)+
+    labs(title="", x="",y="Relative abundance of reads")+
+    theme_bw() +
+    theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
+##this graph is the kind of representation I want for each level but will likely have to set limits on the top twenty most abundant or something like that
+```
 

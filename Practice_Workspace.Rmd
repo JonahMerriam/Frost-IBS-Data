@@ -9,8 +9,44 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r Loading in Data}
+The goal of this Rmd file is to create a reproducible set of code that will allow future people to repeat this analysis on 16S metagenomic data received from MRDNA. 
 
+```{r Cleaning data in excel}
+##The data given to me from my professor was from MR.DNA and was in an excel sheet. This excel sheet had different pages for the levels of phylum down to species. The one change I made to the excel sheet before reading it into R was to delete the empty columns in between the samples and in between the first sample and the label. This can be done in R but it took less than a minute in excel so I did it that way.
+```
+
+
+```{r libraries}
+##The first step to working through these steps in R will be to download these packages and make sure they are ready to use
+install.packages(tidyverse)
+install.packages()
+install.packages()
+install.packages()
+install.packages()
+install.packages()
+install.packages()
+```
+
+```{r Data Loading}
+
+```
+
+```{r Cleaning Data}
+phylum_na<-read_excel(("Frost IBS Original Data.xlsx"), na="0")
+##This code reads in the original data file and replaces all of the 0 values with NA which allows for easier cleaning
+
+phylum_nona<-phylum_na[rowSums(is.na(phylum_na)) != ncol(phylum_na[2:8]), ]
+##This will remove the rows of data that have only NA in the columns specified, in this case [2:8]
+
+phylum_clean<- phylum_nona %>% clean_names() %>%  mutate(phylum = str_to_lower(phylum))
+##This code will put the column titles into a standardized snake case and will change selected character columns to all lowercase so the data is easier to handle. 
+
+options(scipen=999)
+##Changes the scientific notation to normal numbers
+```
+
+```{r Graphing}
+phy_abu<-ggplot(data = phylum_clean, aes(x = k_b_m, y =phylum,)) + geom_dotplot()
 ```
 
 
