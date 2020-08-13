@@ -17,11 +17,14 @@ Cleaned up the data: switch zeros to NA, remove all rows with only NA, standardi
 
 ```{r Working with long format data}
 long_ibs<-read_excel(here("Frost IBS Data", "Frost IBS Long form data.xlsx")) %>% clean_names() %>% mutate(name = str_to_lower(name))
+ 
 ```
 
 ```{r Phylum Long Graph work}
-ggplot(Phylum_Long, aes(y=phylum_relative_abundance,fill=phylum,x=name))+ geom_bar(stat='identity',color="black",aes(fill=phylum))+
-    scale_fill_manual(values=tax_color)+
+tax_color=c("darkred","firebrick3","firebrick1","hotpink3","maroon2","hotpink1"," indianred2","orangered2","darkgoldenrod2","yellow2","darkolivegreen2","chartreuse2","springgreen3","darkgreen","turquoise3","turquoise1","lightcyan1","lightskyblue1","lightskyblue3","steelblue2","royalblue1","royalblue3","royalblue4","plum1","mediumorchid1","purple1","mediumorchid4","purple4","snow3","snow4","grey33")
+
+ggplot(Phylum_Long, aes(y=phylum_relative_abundance,fill=phylum,x=name))+ geom_bar(stat='identity',color="black",aes(fill=phylum))+    
+scale_fill_manual(values=tax_color)+
     labs(title="", x="",y="Relative abundance of reads")+
     theme_bw() +
     theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))

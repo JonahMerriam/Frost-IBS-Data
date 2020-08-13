@@ -18,13 +18,20 @@ The goal of this Rmd file is to create a reproducible set of code that will allo
 
 ```{r libraries}
 ##The first step to working through these steps in R will be to download these packages and make sure they are ready to use
-install.packages(tidyverse)
-install.packages()
-install.packages()
-install.packages()
-install.packages()
-install.packages()
-install.packages()
+install.packages("paletteer")
+install.packages("janitor")
+install.packages("kableExtra")
+install.packages("skimr")
+install.packages("here")
+install.packages("readxl")
+install.packages("tidyverse")
+library(tidyverse)
+library(readxl)
+library(here)
+library(skimr) 
+library(kableExtra)
+library(janitor)
+library(paletteer)
 ```
 
 ```{r Data Loading}
