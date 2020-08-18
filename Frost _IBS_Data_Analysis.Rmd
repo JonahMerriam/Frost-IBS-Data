@@ -30,6 +30,13 @@ phylum_clean<- phylum_nona %>% clean_names() %>%  mutate(phylum = str_to_lower(p
 ##This code will put the column titles into a standardized snake case and will change selected character columns to all lowercase so the data is easier to handle. 
 ```
 
+```{r Displaying Data in a Table}
+phylum_wide %>%
+  kable()
+##Going to want to add in the mean, median, standard deviation and alpha diveristy in some way
+```
+
+
 ```{r Graphing}
 
 ```
