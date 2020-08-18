@@ -33,3 +33,57 @@ scale_fill_manual(values=tax_color)+
 ##this graph is the kind of representation I want for each level but will likely have to set limits on the top twenty most abundant or something like that
 ```
 
+```{r Class Relative Abundance Graph}
+class_long<-read_excel(here("Frost IBS Data", "Class Long .xlsx")) 
+
+ggplot(class_long, aes(y=class_relative_abundance,fill=class,x=name))+ geom_bar(stat='identity',color="black",aes(fill=class))+ scale_color_paletteer_d("awtools::bpalette")+ labs(title="", x="",y="Relative abundance of reads")+theme_bw() + theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
+##This graph will include all 38 Classes
+
+class_long_shortened<- class_long %>% filter(class_relative_abundance >= 1)
+##This will filter out all of the values less than 1% of relative abundance which will give a much simpler looking graph after repeating the first chunk of code with the new shortened class list
+
+class_barchart_shortened<-ggplot(class_long_shortened, aes(y=class_relative_abundance,fill=class,x=name))+ geom_bar(stat='identity',color="black",aes(fill=class))+ scale_color_paletteer_d("awtools::bpalette")+ labs(title="", x="",y="Class Relative abundance above 1%")+ theme_bw() + theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
+```
+
+```{r Order Graph}
+order_long<-read_excel(here("Frost IBS Data", "Order Long.xlsx"))
+
+order_long_shortened<- order_long %>% filter(order_relative_abundance >= 0.5)
+
+order_barchart_shortened<-ggplot(order_long_shortened, aes(y=order_relative_abundance,fill=order,x=name))+ geom_bar(stat='identity',color="black",aes(fill=order))+ scale_color_paletteer_d("awtools::bpalette")+ labs(title="", x="",y="Order Relative abundance above 0.5%")+theme_bw() + theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
+
+order_barchart_shortened
+```
+
+```{r Family Relative Abundance Barchart}
+family_long<-read_excel(here("Frost IBS Data", "Family Long.xlsx"))
+
+family_long_shortened<- family_long %>% filter(family_relative_abundance >= 1)
+
+family_barchart_shortened<-ggplot(family_long_shortened, aes(y=family_relative_abundance,fill=family,x=name))+ geom_bar(stat='identity',color="black",aes(fill=family))+ scale_color_paletteer_d("awtools::bpalette")+ labs(title="", x="",y="Family Relative abundance above 1%")+theme_bw() + theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
+
+family_barchart_shortened
+```
+
+```{r Genus Relative Abundance Barchart}
+genus_long<-read_excel(here("Frost IBS Data", "Genus Long Alphabetical .xlsx"))
+
+genus_long_shortened<- genus_long %>% filter(genus_relative_abundance >= 1)
+
+genus_barchart_shortened<-ggplot(genus_long_shortened, aes(y=genus_relative_abundance,fill=genus,x=name))+ geom_bar(stat='identity',color="black",aes(fill=genus))+ scale_color_paletteer_d("awtools::bpalette")+ labs(title="", x="",y="Genus Relative abundance above 1%")+theme_bw() + theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
+
+genus_barchart_shortened
+```
+
+```{r Species Relative Abundance Barchart}
+species_long<-read_excel(here("Frost IBS Data", "Species Long Alphabetical.xlsx"))
+
+species_long_shortened<- species_long %>% filter(species_relative_abundance >= 1)
+
+species_barchart_shortened<-ggplot(species_long_shortened, aes(y=species_relative_abundance,fill=species,x=name))+ geom_bar(stat='identity',color="black",aes(fill=species))+ scale_color_paletteer_d("awtools::bpalette")+ labs(title="", x="",y="Species Relative abundance above 1%")+theme_bw() + theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
+
+species_barchart_shortened
+```
+
+
+
