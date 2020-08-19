@@ -52,8 +52,17 @@ options(scipen=999)
 ##Changes the scientific notation to normal numbers
 ```
 
-```{r Graphing}
-phy_abu<-ggplot(data = phylum_clean, aes(x = k_b_m, y =phylum,)) + geom_dotplot()
+```{r Tables}
+phylum_long<- read_excel(here("Frost IBS Data", "Phylum Long.xlsx"))
+##Read in the long form data 
+
+phylum_summary_table <- phylum_long %>% group_by(phylum) %>% summarize(mean_abundance = mean(phylum_relative_abundance), median_abundance = median(phylum_relative_abundance), sd_relative_abundance = sd(phylum_relative_abundance))
+phylum_summary_table
+##This table will sort the data for each individual into groups based on the phylum. It includes the mean, median, and standard deviation of each of the individuals relative abundances across each phylum.
+
+phylum_table_above_1<- phylum_long %>% group_by(phylum) %>% filter(phylum_relative_abundance >= 1) %>% summarize(name = n(),mean_abundance = mean(phylum_relative_abundance), median_abundance = median(phylum_relative_abundance), sd_relative_abundance = sd(phylum_relative_abundance))
+phylum_table_above_1
+##The filter on this allows it to weed out the phylum's with less than 1% relative abundance which gives a better idea of the most prevalent phylum's 
 ```
 
 

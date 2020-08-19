@@ -12,7 +12,13 @@ knitr::opts_chunk$set(echo = TRUE)
 The goal of this Rmd file is to create a reproducible set of code that will allow future people to repeat this analysis on 16S metagenomic data received from MRDNA. 
 
 ```{r libraries}
-
+library(tidyverse)
+library(readxl)
+library(here)
+library(skimr) 
+library(kableExtra)
+library(janitor)
+library(paletteer)
 ```
 
 ```{r Data Loading}
@@ -28,6 +34,9 @@ phylum_nona<-phylum_na[rowSums(is.na(phylum_na)) != ncol(phylum_na[2:8]), ]
 
 phylum_clean<- phylum_nona %>% clean_names() %>%  mutate(phylum = str_to_lower(phylum))
 ##This code will put the column titles into a standardized snake case and will change selected character columns to all lowercase so the data is easier to handle. 
+
+options(scipen=999)
+##Changes the scientific notation to normal numbers
 ```
 
 ```{r Displaying Data in a Table}
