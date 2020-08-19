@@ -33,7 +33,7 @@ phylum_clean<- phylum_nona %>% clean_names() %>%  mutate(phylum = str_to_lower(p
 ```{r Displaying Data in a Table}
 phylum_wide %>%
   kable()
-##Going to want to add in the mean, median, standard deviation and alpha diveristy in some way
+##Going to want to add in the mean, median, standard deviation and alpha diversity in some way
 ```
 
 
