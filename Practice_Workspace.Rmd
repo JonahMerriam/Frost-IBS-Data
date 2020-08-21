@@ -16,7 +16,7 @@ The goal of this Rmd file is to create a reproducible set of code that will allo
 ```
 
 
-```{r libraries}
+```{r packages}
 ##The first step to working through these steps in R will be to download these packages and make sure they are ready to use
 install.packages("paletteer")
 install.packages("janitor")
@@ -25,6 +25,15 @@ install.packages("skimr")
 install.packages("here")
 install.packages("readxl")
 install.packages("tidyverse")
+install.packages("metacoder")
+install.packages("vegan")
+install.packages("reshape2")
+install.packages("knitr")
+```
+
+``` {r libraries}
+library(vegan)
+library(metacoder)
 library(tidyverse)
 library(readxl)
 library(here)
@@ -32,24 +41,55 @@ library(skimr)
 library(kableExtra)
 library(janitor)
 library(paletteer)
+library(reshape2)
+library(knitr)
 ```
 
 ```{r Data Loading}
+phylum_long<- read_excel(here("Frost IBS Data", "Phylum Long.xlsx"))
+class_long<- read_excel(here("Frost IBS Data", "Class Long .xlsx"))
+order_long<- read_excel(here("Frost IBS Data", "Order Long.xlsx"))
+family_long<- read_excel(here("Frost IBS Data", "Family Long.xlsx"))
+genus_long<- read_excel(here("Frost IBS Data", "Genus Long Alphabetical .xlsx"))
+species_long<- read_excel(here("Frost IBS Data", "Species Long Alphabetical.xlsx"))
 
+phylum_wide<- read_excel(here("Frost IBS Data", "Frost IBS Original Data.xlsx"))
+class_wide<- read_excel(here("Frost IBS Data", "Class Wide.xlsx"))
+order_wide<- read_excel(here("Frost IBS Data", "Order Wide.xlsx"))
+family_wide<- read_excel(here("Frost IBS Data", "Family Wide.xlsx"))
+genus_wide<- read_excel(here("Frost IBS Data", "Genus Wide.xlsx"))
+species_wide<- read_excel(here("Frost IBS Data", "Species Wide.xlsx"))
 ```
 
 ```{r Cleaning Data}
-phylum_na<-read_excel(("Frost IBS Original Data.xlsx"), na="0")
-##This code reads in the original data file and replaces all of the 0 values with NA which allows for easier cleaning
-
-phylum_nona<-phylum_na[rowSums(is.na(phylum_na)) != ncol(phylum_na[2:8]), ]
-##This will remove the rows of data that have only NA in the columns specified, in this case [2:8]
-
-phylum_clean<- phylum_nona %>% clean_names() %>%  mutate(phylum = str_to_lower(phylum))
-##This code will put the column titles into a standardized snake case and will change selected character columns to all lowercase so the data is easier to handle. 
-
 options(scipen=999)
 ##Changes the scientific notation to normal numbers
+
+##Cleaning the long form data
+phylum_long_na<-read_excel((here("Frost IBS Data.xlsx","Phylum Long.xlsx")), na="0")
+##This code reads in the original data file and replaces all of the 0 values with NA which allows for easier cleaning
+
+phylum_long_nona<-phylum_long_na[rowSums(is.na(phylum_long_na)) != ncol(phylum_long_na[3:3]), ]
+##This will remove the rows of data that have only NA in the columns specified, in this case [3:3]
+
+phylum_long_clean<- phylum_long_nona %>% clean_names() %>%  mutate(phylum = str_to_lower(phylum))
+##This code will put the column titles into a standardized snake case and will change selected character columns to all lowercase so the data is easier to handle. 
+
+##Cleaning wide data
+order_long_na<-read_excel((here("Frost IBS Data","Order Wide.xlsx")), na="0")
+
+order_long_nona<-order_long_na[rowSums(is.na(order_long_na)) != ncol(order_long_na[2:8]), ]
+
+```
+
+```{r Order Graph}
+order_long<-read_excel(here("Frost IBS Data", "Order Long.xlsx"))
+
+order_long_shortened<- order_long %>% filter(order_relative_abundance >= 0.5)
+
+order_barchart_shortened<-ggplot(order_long_shortened, aes(y=order_relative_abundance,fill=order,x=name))+ geom_bar(stat='identity',color="black",aes(fill=order))+ scale_color_paletteer_d("awtools::bpalette")+ labs(title="", x="",y="Order Relative abundance above 0.5%")+theme_bw() + theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
+
+order_barchart_shortened
 ```
 
 ```{r Tables}
@@ -60,11 +100,24 @@ phylum_summary_table <- phylum_long %>% group_by(phylum) %>% summarize(mean_abun
 phylum_summary_table
 ##This table will sort the data for each individual into groups based on the phylum. It includes the mean, median, and standard deviation of each of the individuals relative abundances across each phylum.
 
-phylum_table_above_1<- phylum_long %>% group_by(phylum) %>% filter(phylum_relative_abundance >= 1) %>% summarize(name = n(),mean_abundance = mean(phylum_relative_abundance), median_abundance = median(phylum_relative_abundance), sd_relative_abundance = sd(phylum_relative_abundance))
-phylum_table_above_1
+phylum_table_above_1<- phylum_long %>% group_by(phylum) %>% filter(phylum_relative_abundance >= 1) %>% summarize(name = n(),mean_abundance = mean(phylum_relative_abundance), median_abundance = median(phylum_relative_abundance), sd_relative_abundance = sd(phylum_relative_abundance), shannon = (shannon_phylum))
+kable(phylum_table_above_1)
 ##The filter on this allows it to weed out the phylum's with less than 1% relative abundance which gives a better idea of the most prevalent phylum's 
 ```
 
+```{r Diversity calculations}
+##Calculating Shannon with wide data set 
 
+shannon_order<-diversity(order_wide[2:8],index="shannon",2)
+shannon_order
+
+shannon_phylum<-diversity(phylum_wide[2:8], index="shannon",2)
+shannon_phylum
+
+##Inverse Simpson
+invsimp_phylum<-diversity(phylum_wide[2:8],index="invsimpson",2)
+
+invsimp_order<-diversity(order_wide[2:8],index="invsimpson",2)
+```
 
 
