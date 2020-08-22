@@ -66,7 +66,7 @@ options(scipen=999)
 ##Changes the scientific notation to normal numbers
 
 ##Cleaning the long form data
-phylum_long_na<-read_excel((here("Frost IBS Data.xlsx","Phylum Long.xlsx")), na="0")
+phylum_long_na<-read_excel((here("Frost IBS Data","Phylum Long.xlsx")), na="0")
 ##This code reads in the original data file and replaces all of the 0 values with NA which allows for easier cleaning
 
 phylum_long_nona<-phylum_long_na[rowSums(is.na(phylum_long_na)) != ncol(phylum_long_na[3:3]), ]
@@ -142,12 +142,13 @@ order_stat<- sapply( order_stat, as.numeric )
 ##Getting rid of all columns with zero
 order_stat<-order_stat[, !apply(order_stat == 0, 2, all)]
 
-##Renaming the rownames with the sample names
+##Renaming the row names with the sample names
 
 
 ##Test for normal distribution with Shapiro-Wilk’s test for normal distribution 
-shapiro.test(order_stat[1:94])
-
+shapiro.test(order_stat[,c("acidimicrobiales")])
+##This works for an individual column but I want to create a list for the whole data set where NA is listed if not enough samples and where the p-value can tell if it is normal and then have a data frame where only the normally distributed ones appear
+order_shapiro_full<- shapiro.test((order_stat[,c[1:94]]))
 
 ```
 
