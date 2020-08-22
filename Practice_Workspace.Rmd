@@ -25,7 +25,6 @@ install.packages("skimr")
 install.packages("here")
 install.packages("readxl")
 install.packages("tidyverse")
-install.packages("metacoder")
 install.packages("vegan")
 install.packages("reshape2")
 install.packages("knitr")
@@ -34,7 +33,6 @@ install.packages("ggpubr")
 
 ``` {r libraries}
 library(vegan)
-library(metacoder)
 library(tidyverse)
 library(readxl)
 library(here)
@@ -134,10 +132,21 @@ colnames(order_stat) <- as.character(order_stat[1,])
 
 ##gets rid of the first row 
 order_stat <- order_stat[-c(1), ]
-order_stat <- order_stat %>% mutate_all(as.numeric()) 
+ 
+##turns it into data frame instead of collection of variables
+order_stat<-data.frame(order_stat)
+
+##Shifting all of the columns to numeric
+order_stat<- sapply( order_stat, as.numeric )
+
+##Getting rid of all columns with zero
+order_stat<-order_stat[, !apply(order_stat == 0, 2, all)]
+
+##Renaming the rownames with the sample names
+
 
 ##Test for normal distribution with Shapiro-Wilk’s test for normal distribution 
-shapiro.test(order_stat[1:112])
+shapiro.test(order_stat[1:94])
 
 
 ```
