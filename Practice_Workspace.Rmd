@@ -29,6 +29,7 @@ install.packages("metacoder")
 install.packages("vegan")
 install.packages("reshape2")
 install.packages("knitr")
+install.packages("ggpubr")
 ```
 
 ``` {r libraries}
@@ -43,6 +44,7 @@ library(janitor)
 library(paletteer)
 library(reshape2)
 library(knitr)
+library(ggpubr)
 ```
 
 ```{r Data Loading}
@@ -118,6 +120,25 @@ shannon_phylum
 invsimp_phylum<-diversity(phylum_wide[2:8],index="invsimpson",2)
 
 invsimp_order<-diversity(order_wide[2:8],index="invsimpson",2)
+
+##Making a graphical representation
 ```
 
+```{r Statistics}
+options(scipen=999)
+##Getting the data into a use able format by giving each separate group its own column so the tests can be run within a group 
+order_stat<- t(order_wide)
+
+##changes the column names to the first row
+colnames(order_stat) <- as.character(order_stat[1,])
+
+##gets rid of the first row 
+order_stat <- order_stat[-c(1), ]
+order_stat <- order_stat %>% mutate_all(as.numeric()) 
+
+##Test for normal distribution with Shapiro-Wilk’s test for normal distribution 
+shapiro.test(order_stat[1:112])
+
+
+```
 
