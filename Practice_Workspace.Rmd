@@ -29,6 +29,8 @@ install.packages("vegan")
 install.packages("reshape2")
 install.packages("knitr")
 install.packages("ggpubr")
+install.packages("shiny")
+install.packages("sqldf")
 ```
 
 ``` {r libraries}
@@ -43,6 +45,8 @@ library(paletteer)
 library(reshape2)
 library(knitr)
 library(ggpubr)
+library(shiny)
+library(sqldf)
 ```
 
 ```{r Data Loading}
@@ -119,7 +123,10 @@ invsimp_phylum<-diversity(phylum_wide[2:8],index="invsimpson",2)
 
 invsimp_order<-diversity(order_wide[2:8],index="invsimpson",2)
 
+alpha_diversity<-data.frame(shannon_order, invsimp_order)
+
 ##Making a graphical representation
+ggplot(alpha_full, aes(x=Name, y=value, fill=variable, shape=variable))+geom_point(size=4,aes(color=variable))+facet_grid(variable~.,scales="free")+theme_bw()+theme(axis.text.x = element_text(angle = 90,hjust=1,vjust=0.5,size=8),axis.text.y=element_text(size=12),legend.position = "top")
 ```
 
 ```{r Statistics}
