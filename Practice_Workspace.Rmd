@@ -177,5 +177,10 @@ order_long_normally_distributed<- order_long_shapiro %>% filter(Pvalue >= 0.05)
 order_agg = merge(order_long_normally_distributed, order_long, by="order")
 ```
 
+```{r Individual Significance Data}
+##Testing within each order to see if k_b_m has a statistically significant difference in any order. Might try to end up with a table of all cases of this for each person.
+
+##Running the t-test
+```
 
 
