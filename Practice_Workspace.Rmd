@@ -36,6 +36,24 @@ install.packages("sqldf")
 install.packages("dplyr")
 ```
 
+```{r}
+install.packages("paletteer",repos = "http://cran.us.r-project.org")
+install.packages("janitor",repos = "http://cran.us.r-project.org")
+install.packages("kableExtra",repos = "http://cran.us.r-project.org")
+install.packages("skimr",repos = "http://cran.us.r-project.org")
+install.packages("here",repos = "http://cran.us.r-project.org")
+install.packages("readxl",repos = "http://cran.us.r-project.org")
+install.packages("tidyverse",repos = "http://cran.us.r-project.org")
+install.packages("vegan",repos = "http://cran.us.r-project.org")
+install.packages("reshape2",repos = "http://cran.us.r-project.org")
+install.packages("knitr",repos = "http://cran.us.r-project.org")
+install.packages("ggpubr",repos = "http://cran.us.r-project.org")
+install.packages("shiny",repos = "http://cran.us.r-project.org")
+install.packages("sqldf",repos = "http://cran.us.r-project.org")
+install.packages("dplyr",repos = "http://cran.us.r-project.org")
+```
+
+
 ``` {r libraries}
 library(vegan)
 library(tidyverse)
