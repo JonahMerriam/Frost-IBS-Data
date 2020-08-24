@@ -130,45 +130,16 @@ alpha_diversity<-data.frame(shannon_order, invsimp_order)
 ggplot(alpha_full, aes(x=Name, y=value, fill=variable, shape=variable))+geom_point(size=4,aes(color=variable))+facet_grid(variable~.,scales="free")+theme_bw()+theme(axis.text.x = element_text(angle = 90,hjust=1,vjust=0.5,size=8),axis.text.y=element_text(size=12),legend.position = "top")
 ```
 
-```{r Statistics}
-options(scipen=999)
-##Getting the data into a use able format by giving each separate group its own column so the tests can be run within a group 
-order_stat<- t(order_wide)
-
-##changes the column names to the first row
-colnames(order_stat) <- as.character(order_stat[1,])
-
-##gets rid of the first row 
-order_stat <- order_stat[-c(1), ]
- 
-##turns it into data frame instead of collection of variables
-order_stat<-data.frame(order_stat)
-
-##Shifting all of the columns to numeric
-order_stat<- sapply( order_stat, as.numeric )
-
-##Getting rid of all columns with zero
-order_stat<-order_stat[, !apply(order_stat == 0, 2, all)]
-
-##Making it back into dataframe
-order_stat_df<-data.frame(order_stat)
-
-##Renaming the row names with the sample names
-
-
-##Test for normal distribution with Shapiro-Wilk’s test for normal distribution 
-shapiro.test(order_stat_df[,c("acidimicrobiales")])
-##This works for an individual column but I want to create a list for the whole data set where NA is listed if not enough samples and where the p-value can tell if it is normal and then have a data frame where only the normally distributed ones appear
-order_shapiro_full<- shapiro.test((order_stat[,c[1:94]]))
-
-```
-
 ```{r Shapiro Test}
+##Will cause data to be expressed in decimals and not scientific notation 
+options(scipen=999)
+
 ##This code will run the shapiro wilks test in groups based off of the taxonomic level. This allows the same level to be gathered across samples so that they can be tested for normality. Each order will receive a P value based on if it 
 order_long_stat<- ddply(order_long,.(order), summarise, cbind(if(length(unique(order_relative_abundance))==1) NA else shapiro.test(order_relative_abundance)$p.value, if(length(unique(order_relative_abundance))==1) NA else shapiro.test(order_relative_abundance)$statistic))
 
 ##This will create a data frame with the pvalue of the shapiro test and the W-statistic. The pvalue will be the used to tell if the specific order is distributed normally by accepting sets as normally distributed if they are over the value of p>0.05
-order_long_shapiro<- data.frame(order=order_long_stat[,1],as.data.frame(order_long_stat[,2]),stringsAsFactors=FALSE)names(order_long_shapiro)[2:3]<-c("Pvalue","stats")
+order_long_shapiro<-data.frame(order=order_long_stat[,1],as.data.frame(order_long_stat[,2]),stringsAsFactors=FALSE)
+names(order_long_shapiro)[2:3]<-c("Pvalue","stats")
 
 ##Removing all tests with pvalue below 0.5
 order_long_normally_distributed<- order_long_shapiro %>% filter(Pvalue >= 0.05)
@@ -178,9 +149,44 @@ order_agg = merge(order_long_normally_distributed, order_long, by="order")
 ```
 
 ```{r Individual Significance Data}
-##Testing within each order to see if k_b_m has a statistically significant difference in any order. Might try to end up with a table of all cases of this for each person.
+##Adding mean and sd to the data frame
+order_agg_test<- order_agg %>% mutate(mean= ave(order_agg$order_relative_abundance, order_agg$order)) %>% mutate(sd=(ave(order_agg$order_relative_abundance, order_agg$order, FUN=sd)))
 
-##Running the t-test
+##Calculating Z scores
+order_zscore %>% mutate(zscore = ((order_agg_test$order_relative_abundance - order_agg_test$mean)/sd))
+
+order_zscore<- order_agg_test %>% mutate(zscore = ((order_agg_test$order_relative_abundance - order_agg_test$mean)/sd))
+
+##Filtering for +/- 2 sd away from mean 
+order_2sd <- order_zscore %>% filter(zscore >= 2) %>% filter(zscore >= -2)
 ```
 
+```{r Stats for Species Level}
+##Two step process of getting shapiro wilks results
+species_long_stat<- ddply(species_long,.(species), summarise, cbind(if(length(unique(species_relative_abundance))==1) NA else shapiro.test(species_relative_abundance)$p.value, if(length(unique(species_relative_abundance))==1) NA else shapiro.test(species_relative_abundance)$statistic))
+
+species_long_shapiro<- data.frame(species=species_long_stat[,1],as.data.frame(species_long_stat[,2]),stringsAsFactors=FALSE)
+names(species_long_shapiro)[2:3]<-c("Pvalue","stats")
+
+##Removing all tests with pvalue below 0.5
+species_long_normally_distributed<- species_long_shapiro %>% filter(Pvalue >= 0.05)
+
+##Combing pvalue and relative abundance  
+species_agg = merge(species_long_normally_distributed, species_long, by="species")
+
+##Adding mean and sd to the data frame
+species_agg_test<- species_agg %>% mutate(mean= ave(species_agg$species_relative_abundance, species_agg$species)) %>% mutate(sd=(ave(species_agg$species_relative_abundance, species_agg$species, FUN=sd)))
+
+##Calculating Z-scores
+species_zscore<- species_agg_test %>% mutate(zscore = ((species_agg_test$species_relative_abundance - species_agg_test$mean)/sd))
+
+##Filtering for +/-2sd
+species_2sd <- species_zscore %>% filter(zscore >= 2 | zscore <= -2)
+
+##Filtering for +/-1.5sd
+species_1.5sd <- species_zscore %>% filter(zscore >=1.5 | zscore <= -1.5)
+
+##Filtering for k_b_m
+species_1.5sd_kbm<- species_1.5sd %>% filter(name=="k_b_m")
+```
 
