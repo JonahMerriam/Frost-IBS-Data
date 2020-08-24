@@ -20,20 +20,20 @@ The goal of this Rmd file is to create a reproducible set of code that will allo
 
 ```{r packages}
 ##The first step to working through these steps in R will be to download these packages and make sure they are ready to use
-#install.packages("paletteer")
-#install.packages("janitor")
-#install.packages("kableExtra")
-#install.packages("skimr")
-#install.packages("here")
-#install.packages("readxl")
-#install.packages("tidyverse")
-#install.packages("vegan")
-#install.packages("reshape2")
-#install.packages("knitr")
-#install.packages("ggpubr")
-#install.packages("shiny")
-#install.packages("sqldf")
-#install.packages("dplyr")
+install.packages("paletteer")
+install.packages("janitor")
+install.packages("kableExtra")
+install.packages("skimr")
+install.packages("here")
+install.packages("readxl")
+install.packages("tidyverse")
+install.packages("vegan")
+install.packages("reshape2")
+install.packages("knitr")
+install.packages("ggpubr")
+install.packages("shiny")
+install.packages("sqldf")
+install.packages("dplyr")
 ```
 
 ``` {r libraries}
@@ -125,19 +125,24 @@ shannon_order<-diversity(order_wide[2:8],index="shannon",2)
 
 shannon_phylum<-diversity(phylum_wide[2:8], index="shannon",2)
 
+shannon_species<-diversity(species_wide[2:8],index="shannon",2)
+
 ##Inverse Simpson
 invsimp_phylum<-diversity(phylum_wide[2:8],index="invsimpson",2)
 
 invsimp_order<-diversity(order_wide[2:8],index="invsimpson",2)
 
+invsimp_species<-diversity(species_wide[2:8],index="invsimpson",2)
+
 alpha_diversity<-data.frame(shannon_order, invsimp_order)
+alpha_species_diversity<- data.frame(shannon_species, invsimp_species)
 
 ##Merging alpha data and long form data
-alpha_diversity<-setDT(alpha_diversity, keep.rownames = TRUE)[]
-alpha_diversity<- alpha_diversity %>% mutate(name=alpha_diversity$rn)
-alpha_diversity <- alpha_diversity[,-(1),drop=FALSE]
+alpha_species_diversity<-setDT(alpha_diversity, keep.rownames = TRUE)[]
+alpha_species_diversity<- alpha_species_diversity %>% mutate(name=alpha_species_diversity$rn)
+alpha_species_diversity <- alpha_species_diversity[,-(1),drop=FALSE]
 
-alpha_order_melted<-melt(alpha_diversity)
+alpha_species_melted<-melt(alpha_diversity)
 
 ##Making a graphical representation
 ggplot(alpha_order_melted, aes(x=name, y=value, fill=variable,shape=variable))+geom_point(size=4,aes(color=variable))+facet_grid(variable~.,scales="free")+theme_bw()+theme(axis.text.x = element_text(angle = 90,hjust=1,vjust=0.5,size=8),axis.text.y=element_text(size=12),legend.position = "top")

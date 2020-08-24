@@ -8,24 +8,56 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+INTRODUCTION
+The goal of this Rmd file is to create a reproducible set of code that will allow everyone to repeat this analysis on 16S metagenomic relative abundance data received from MRDNA. This analysis compares data from seven different human fecal samples as a means of understanding any major trends in the human gut microbiome between these persons. One of these samples is from someone who has irritable bowel syndrome while the rest are from their relatives who do not have IBS. This set of code will allow the analyst to represent the differences among the samples using graphs, calculations, and statistics to see if any trends appear that could be invetigated in more depth.   
 
-The goal of this Rmd file is to create a reproducible set of code that will allow future people to repeat this analysis on 16S metagenomic data received from MRDNA. 
 
-```{r}
+BACKGROUND
+The data received from MR.DNA company came in the form of an excel sheet that contained taxonomic levels from phylum to species with the taxonomic level and its relative abundance listed for each sample.
 
+DOWNLOADING and Preparing R/Github 
+These processes are well described in the R introduction course linked here(). download and set up R as well as github and create a repository as described in sections ____. Make a place for data files so that the data can be found easily.
+
+Getting R Ready
+These packages are all used in this analysis so downloading them is the necessary starting place
+```{r packages}
+##The first step to working through these steps in R will be to download these packages and make sure they are ready to use
+install.packages("paletteer",repos = "http://cran.us.r-project.org")
+install.packages("janitor",repos = "http://cran.us.r-project.org")
+install.packages("kableExtra",repos = "http://cran.us.r-project.org")
+install.packages("skimr",repos = "http://cran.us.r-project.org")
+install.packages("here",repos = "http://cran.us.r-project.org")
+install.packages("readxl",repos = "http://cran.us.r-project.org")
+install.packages("tidyverse",repos = "http://cran.us.r-project.org")
+install.packages("vegan",repos = "http://cran.us.r-project.org")
+install.packages("reshape2",repos = "http://cran.us.r-project.org")
+install.packages("knitr",repos = "http://cran.us.r-project.org")
+install.packages("ggpubr",repos = "http://cran.us.r-project.org")
+install.packages("shiny",repos = "http://cran.us.r-project.org")
+install.packages("sqldf",repos = "http://cran.us.r-project.org")
+install.packages("dplyr",repos = "http://cran.us.r-project.org")
 ```
-
-
-```{r libraries}
-#library(tidyverse)
+To make the packages available to use in R their libraries will have to be loaded each time R is opened.
+``` {r libraries}
+library(vegan)
+library(tidyverse)
 library(readxl)
-#library(here)
-#library(skimr) 
-#library(kableExtra)
-#library(janitor)
-#library(paletteer)
+library(here)
+library(skimr) 
+library(kableExtra)
+library(janitor)
+library(paletteer)
+library(reshape2)
+library(knitr)
+library(ggpubr)
+library(shiny)
+library(sqldf)
+library(dplyr)
+library(data.table)
 ```
 
+Before working in R
+To make the data wrangling processes easier in R the excel sheet that has the original data can be manipulated. The first image is the original sheet and it has tabs for the levels Phylum-Species. The first column contains all of the hits produced for that taxonomic level while the sample columns are headed by the sample names. The second picture shows how these data can be formatted in a longer manner that will make data analysis easier. Make an individual sheet for each level Phylum-Species and save it into the designated data folder in the R repository. Then do this with the original form. Once complete read the data into R with this code below using the folder name and then the sheet name in the here() function.
 ```{r Data Loading}
 ##Once the data has been uploaded to 
 phylum_long<- read_excel(here("Frost IBS Data","Phylum Long.xlsx"))
@@ -43,19 +75,71 @@ genus_wide<- read_excel(here("Frost IBS Data", "Genus Wide.xlsx"))
 species_wide<- read_excel(here("Frost IBS Data", "Species Wide.xlsx"))
 ```
 
-```
-
+Cleaning Data
+A good first step before working with any data is to make sure it has been "cleaned". In this case that will mean that all of the titles are standardized along with the text. The code below will provide an easy way of making sure each of the data sets have a standardized 
 ```{r Cleaning Data}
-phylum_na<-read_excel(("Frost IBS Original Data.xlsx"), na="0")
-##This code reads in the original data file and replaces all of the 0 values with NA which allows for easier cleaning
+
+##This will put all of the characters into snake_case (lower case with words separated by underscores) and will transform all words in the listed column into lowercase.
+phylum_long<- phylum_long %>% clean_names() %>%  mutate(phylum = str_to_lower(phylum))
+
+##Changes all data numbers from reporting in scientific notation to reporting with normal integers
+options(scipen=999)
+
+head(phylum_long)
 ```
 
+Calculating Alpha Diversity
+A good first step when analyzing data is looking at metrics like alpha diversity. The code below allows for calculation and visualization of alpha diversity metrics like Shannon and inverse Simpson. 
+```{r Diversity calculations}
+
+##Calculating Shannon diversity index with wide data set 
+shannon_order<-diversity(order_wide[2:8],index="shannon",2)
+
+##Inverse Simpson
+invsimp_order<-diversity(order_wide[2:8],index="invsimpson",2)
+
+##Creating a data frame with both test values
+alpha_diversity<-data.frame(shannon_order, invsimp_order)
+
+##Merging alpha data and long form data
+alpha_diversity<-setDT(alpha_diversity, keep.rownames = TRUE)[]
+alpha_diversity<- alpha_diversity %>% mutate(name=alpha_diversity$rn)
+alpha_diversity <- alpha_diversity[,-(1),drop=FALSE]
+
+##Melting the data so it can be graphed
+alpha_order_melted<-melt(alpha_diversity)
+
+##Making a graphical representation
+graph_order_alpha<-ggplot(alpha_order_melted, aes(x=name, y=value, fill=variable,shape=variable))+geom_point(size=4,aes(color=variable))+facet_grid(variable~.,scales="free")+theme_bw()+theme(axis.text.x = element_text(angle = 90,hjust=1,vjust=0.5,size=8),axis.text.y=element_text(size=12),legend.position = "top")
+
+graph_order_alpha
+```
+
+Graphing
+Visualizing the data is an important step in helping better understand the relative abundance trends among samples. Below are listed a few ways to visually represent the data.
+```{r Phylum Graph}
+phylum_long<- read_excel(here("Frost IBS Data", "Phylum Long.xlsx"))
+
+phylum_barchart<-ggplot(phylum_long, aes(y=phylum_relative_abundance,fill=phylum,x=name))+ geom_bar(stat='identity',color="black",aes(fill=phylum))+ scale_color_paletteer_d("awtools::bpalette")+ labs(title="", x="",y="Phylum Relative abundance")+theme_bw() + theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
+
+phylum_barchart
+```
+
+Graphs can be created for every taxonomic level like the one above but they can become crowded and hard to read. By applying a filter on the data a new data set can be created for all of the points above the set threshold. 
+```{r Order Graph}
+order_long<- read_excel(here("Frost IBS Data", "Order Long.xlsx"))
+
+order_long_shortened<- order_long %>% filter(order_relative_abundance >= 0.5)
+
+order_barchart_shortened<-ggplot(order_long_shortened, aes(y=order_relative_abundance,fill=order,x=name))+ geom_bar(stat='identity',color="black",aes(fill=order))+ scale_color_paletteer_d("awtools::bpalette")+ labs(title="", x="",y="Order Relative abundance above 0.5%")+theme_bw() + theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
+
+order_barchart_shortened
+```
+
+Tables 
+Creating tables can be a useful way or organizing data that you want to group or present. The section below includes code for a few tables that were useful in representing the data from this particular analysis. Tables can be easily manipulated and changed using a variety of functions so the best tables are the ones tailored to show the data that is relevant to the analysis. 
 ```{r Displaying Data in a Table}
 ##Going to want to add in the mean, median, standard deviation and alpha diversity in some way
 ```
 
-
-```{r Graphing}
-
-```
 
