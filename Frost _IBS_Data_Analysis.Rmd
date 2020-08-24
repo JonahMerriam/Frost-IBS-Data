@@ -12,13 +12,13 @@ knitr::opts_chunk$set(echo = TRUE)
 The goal of this Rmd file is to create a reproducible set of code that will allow future people to repeat this analysis on 16S metagenomic data received from MRDNA. 
 
 ```{r libraries}
-library(tidyverse)
+#library(tidyverse)
 library(readxl)
-library(here)
-library(skimr) 
-library(kableExtra)
-library(janitor)
-library(paletteer)
+#library(here)
+#library(skimr) 
+#library(kableExtra)
+#library(janitor)
+#library(paletteer)
 ```
 
 ```{r Data Loading}
@@ -28,20 +28,9 @@ library(paletteer)
 ```{r Cleaning Data}
 phylum_na<-read_excel(("Frost IBS Original Data.xlsx"), na="0")
 ##This code reads in the original data file and replaces all of the 0 values with NA which allows for easier cleaning
-
-phylum_nona<-phylum_na[rowSums(is.na(phylum_na)) != ncol(phylum_na[2:8]), ]
-##This will remove the rows of data that have only NA in the columns specified, in this case [2:8]
-
-phylum_clean<- phylum_nona %>% clean_names() %>%  mutate(phylum = str_to_lower(phylum))
-##This code will put the column titles into a standardized snake case and will change selected character columns to all lowercase so the data is easier to handle. 
-
-options(scipen=999)
-##Changes the scientific notation to normal numbers
 ```
 
 ```{r Displaying Data in a Table}
-phylum_wide %>%
-  kable()
 ##Going to want to add in the mean, median, standard deviation and alpha diversity in some way
 ```
 

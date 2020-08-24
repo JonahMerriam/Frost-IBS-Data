@@ -2,7 +2,9 @@
 title: "Practice_Workspace.Rmd"
 author: "Jonah Merriam"
 date: "8/10/2020"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -18,20 +20,20 @@ The goal of this Rmd file is to create a reproducible set of code that will allo
 
 ```{r packages}
 ##The first step to working through these steps in R will be to download these packages and make sure they are ready to use
-install.packages("paletteer")
-install.packages("janitor")
-install.packages("kableExtra")
-install.packages("skimr")
-install.packages("here")
-install.packages("readxl")
-install.packages("tidyverse")
-install.packages("vegan")
-install.packages("reshape2")
-install.packages("knitr")
-install.packages("ggpubr")
-install.packages("shiny")
-install.packages("sqldf")
-install.packages("dplyr")
+#install.packages("paletteer")
+#install.packages("janitor")
+#install.packages("kableExtra")
+#install.packages("skimr")
+#install.packages("here")
+#install.packages("readxl")
+#install.packages("tidyverse")
+#install.packages("vegan")
+#install.packages("reshape2")
+#install.packages("knitr")
+#install.packages("ggpubr")
+#install.packages("shiny")
+#install.packages("sqldf")
+#install.packages("dplyr")
 ```
 
 ``` {r libraries}
@@ -53,7 +55,7 @@ library(data.table)
 ```
 
 ```{r Data Loading}
-phylum_long<- read_excel(here("Frost IBS Data", "Phylum Long.xlsx"))
+phylum_long<- read_excel(here("Frost IBS Data","Phylum Long.xlsx"))
 class_long<- read_excel(here("Frost IBS Data", "Class Long .xlsx"))
 order_long<- read_excel(here("Frost IBS Data", "Order Long.xlsx"))
 family_long<- read_excel(here("Frost IBS Data", "Family Long.xlsx"))
@@ -100,16 +102,17 @@ order_barchart_shortened
 ```
 
 ```{r Tables}
+##Read in the long form data
 phylum_long<- read_excel(here("Frost IBS Data", "Phylum Long.xlsx"))
-##Read in the long form data 
 
+##This table will sort the data for each individual into groups based on the phylum. It includes the mean, median, and standard deviation of each of the individuals relative abundances across each phylum.
 phylum_summary_table <- phylum_long %>% group_by(phylum) %>% summarize(mean_abundance = mean(phylum_relative_abundance), median_abundance = median(phylum_relative_abundance), sd_relative_abundance = sd(phylum_relative_abundance))
 phylum_summary_table
-##This table will sort the data for each individual into groups based on the phylum. It includes the mean, median, and standard deviation of each of the individuals relative abundances across each phylum.
 
+##The filter on this allows it to weed out the phylum's with less than 1% relative abundance which gives a better idea of the most prevalent phylum's 
 phylum_table_above_1<- phylum_long %>% group_by(phylum) %>% filter(phylum_relative_abundance >= 1) %>% summarize(name = n(),mean_abundance = mean(phylum_relative_abundance), median_abundance = median(phylum_relative_abundance), sd_relative_abundance = sd(phylum_relative_abundance), shannon = (shannon_phylum))
 kable(phylum_table_above_1)
-##The filter on this allows it to weed out the phylum's with less than 1% relative abundance which gives a better idea of the most prevalent phylum's 
+
 ```
 
 ```{r Diversity calculations}
@@ -119,10 +122,8 @@ kable(phylum_table_above_1)
 ##Calculating Shannon with wide data set 
 
 shannon_order<-diversity(order_wide[2:8],index="shannon",2)
-shannon_order
 
 shannon_phylum<-diversity(phylum_wide[2:8], index="shannon",2)
-shannon_phylum
 
 ##Inverse Simpson
 invsimp_phylum<-diversity(phylum_wide[2:8],index="invsimpson",2)
