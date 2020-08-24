@@ -11,6 +11,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The goal of this Rmd file is to create a reproducible set of code that will allow future people to repeat this analysis on 16S metagenomic data received from MRDNA. 
 
+```{r}
+
+```
+
+
 ```{r libraries}
 #library(tidyverse)
 library(readxl)
@@ -22,6 +27,21 @@ library(readxl)
 ```
 
 ```{r Data Loading}
+##Once the data has been uploaded to 
+phylum_long<- read_excel(here("Frost IBS Data","Phylum Long.xlsx"))
+class_long<- read_excel(here("Frost IBS Data", "Class Long .xlsx"))
+order_long<- read_excel(here("Frost IBS Data", "Order Long.xlsx"))
+family_long<- read_excel(here("Frost IBS Data", "Family Long.xlsx"))
+genus_long<- read_excel(here("Frost IBS Data", "Genus Long Alphabetical .xlsx"))
+species_long<- read_excel(here("Frost IBS Data", "Species Long Alphabetical.xlsx"))
+
+phylum_wide<- read_excel(here("Frost IBS Data", "Frost IBS Original Data.xlsx"))
+class_wide<- read_excel(here("Frost IBS Data", "Class Wide.xlsx"))
+order_wide<- read_excel(here("Frost IBS Data", "Order Wide.xlsx"))
+family_wide<- read_excel(here("Frost IBS Data", "Family Wide.xlsx"))
+genus_wide<- read_excel(here("Frost IBS Data", "Genus Wide.xlsx"))
+species_wide<- read_excel(here("Frost IBS Data", "Species Wide.xlsx"))
+```
 
 ```
 
