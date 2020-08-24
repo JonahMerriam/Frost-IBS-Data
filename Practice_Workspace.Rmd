@@ -47,6 +47,7 @@ library(knitr)
 library(ggpubr)
 library(shiny)
 library(sqldf)
+library(dplyr)
 ```
 
 ```{r Data Loading}
@@ -149,13 +150,32 @@ order_stat<- sapply( order_stat, as.numeric )
 ##Getting rid of all columns with zero
 order_stat<-order_stat[, !apply(order_stat == 0, 2, all)]
 
+##Making it back into dataframe
+order_stat_df<-data.frame(order_stat)
+
 ##Renaming the row names with the sample names
 
 
 ##Test for normal distribution with Shapiro-Wilk’s test for normal distribution 
-shapiro.test(order_stat[,c("acidimicrobiales")])
+shapiro.test(order_stat_df[,c("acidimicrobiales")])
 ##This works for an individual column but I want to create a list for the whole data set where NA is listed if not enough samples and where the p-value can tell if it is normal and then have a data frame where only the normally distributed ones appear
 order_shapiro_full<- shapiro.test((order_stat[,c[1:94]]))
 
 ```
+
+```{r Shapiro Test}
+##This code will run the shapiro wilks test in groups based off of the taxonomic level. This allows the same level to be gathered across samples so that they can be tested for normality. Each order will receive a P value based on if it 
+order_long_stat<- ddply(order_long,.(order), summarise, cbind(if(length(unique(order_relative_abundance))==1) NA else shapiro.test(order_relative_abundance)$p.value, if(length(unique(order_relative_abundance))==1) NA else shapiro.test(order_relative_abundance)$statistic))
+
+##This will create a data frame with the pvalue of the shapiro test and the W-statistic. The pvalue will be the used to tell if the specific order is distributed normally by accepting sets as normally distributed if they are over the value of p>0.05
+order_long_shapiro<- data.frame(order=order_long_stat[,1],as.data.frame(order_long_stat[,2]),stringsAsFactors=FALSE)names(order_long_shapiro)[2:3]<-c("Pvalue","stats")
+
+##Removing all tests with pvalue below 0.5
+order_long_normally_distributed<- order_long_shapiro %>% filter(Pvalue >= 0.05)
+
+##Combing pvalue and relative abundance  
+order_agg = merge(order_long_normally_distributed, order_long, by="order")
+```
+
+
 
