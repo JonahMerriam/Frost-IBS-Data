@@ -1,24 +1,23 @@
 ---
 title: "Frost _IBS_Data_Analysis.Rmd"
 author: "Jonah Merriam"
-date: "8/10/2020"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-INTRODUCTION
+INTRODUCTION:
 The goal of this Rmd file is to create a reproducible set of code that will allow everyone to repeat this analysis on 16S metagenomic relative abundance data received from MRDNA. This analysis compares data from seven different human fecal samples as a means of understanding any major trends in the human gut microbiome between these persons. One of these samples is from someone who has irritable bowel syndrome while the rest are from their relatives who do not have IBS. This set of code will allow the analyst to represent the differences among the samples using graphs, calculations, and statistics to see if any trends appear that could be invetigated in more depth.   
 
 
-BACKGROUND
+BACKGROUND:
 The data received from MR.DNA company came in the form of an excel sheet that contained taxonomic levels from phylum to species with the taxonomic level and its relative abundance listed for each sample.
 
-DOWNLOADING and Preparing R/Github 
+DOWNLOADING and Preparing R/Github: 
 These processes are well described in the R introduction course linked here(). download and set up R as well as github and create a repository as described in sections ____. Make a place for data files so that the data can be found easily.
 
-Getting R Ready
+Getting R Ready:
 These packages are all used in this analysis so downloading them is the necessary starting place
 ```{r packages}
 ##The first step to working through these steps in R will be to download these packages and make sure they are ready to use

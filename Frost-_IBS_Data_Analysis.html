@@ -369,10 +369,10 @@ summary {
 </div>
 
 
-<p>INTRODUCTION The goal of this Rmd file is to create a reproducible set of code that will allow everyone to repeat this analysis on 16S metagenomic relative abundance data received from MRDNA. This analysis compares data from seven different human fecal samples as a means of understanding any major trends in the human gut microbiome between these persons. One of these samples is from someone who has irritable bowel syndrome while the rest are from their relatives who do not have IBS. This set of code will allow the analyst to represent the differences among the samples using graphs, calculations, and statistics to see if any trends appear that could be invetigated in more depth.</p>
-<p>BACKGROUND The data received from MR.DNA company came in the form of an excel sheet that contained taxonomic levels from phylum to species with the taxonomic level and its relative abundance listed for each sample.</p>
-<p>DOWNLOADING and Preparing R/Github These processes are well described in the R introduction course linked here(). download and set up R as well as github and create a repository as described in sections ____. Make a place for data files so that the data can be found easily.</p>
-<p>Getting R Ready These packages are all used in this analysis so downloading them is the necessary starting place</p>
+<p>INTRODUCTION: The goal of this Rmd file is to create a reproducible set of code that will allow everyone to repeat this analysis on 16S metagenomic relative abundance data received from MRDNA. This analysis compares data from seven different human fecal samples as a means of understanding any major trends in the human gut microbiome between these persons. One of these samples is from someone who has irritable bowel syndrome while the rest are from their relatives who do not have IBS. This set of code will allow the analyst to represent the differences among the samples using graphs, calculations, and statistics to see if any trends appear that could be invetigated in more depth.</p>
+<p>BACKGROUND: The data received from MR.DNA company came in the form of an excel sheet that contained taxonomic levels from phylum to species with the taxonomic level and its relative abundance listed for each sample.</p>
+<p>DOWNLOADING and Preparing R/Github: These processes are well described in the R introduction course linked here(). download and set up R as well as github and create a repository as described in sections ____. Make a place for data files so that the data can be found easily.</p>
+<p>Getting R Ready: These packages are all used in this analysis so downloading them is the necessary starting place</p>
 <pre class="r"><code>##The first step to working through these steps in R will be to download these packages and make sure they are ready to use
 install.packages(&quot;paletteer&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
@@ -380,35 +380,35 @@ install.packages(&quot;paletteer&quot;,repos = &quot;http://cran.us.r-project.or
 <pre><code>## package &#39;paletteer&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;janitor&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
 <pre><code>## package &#39;janitor&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;kableExtra&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
 <pre><code>## package &#39;kableExtra&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;skimr&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
 <pre><code>## package &#39;skimr&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;here&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
 <pre><code>## package &#39;here&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;readxl&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
@@ -422,14 +422,14 @@ install.packages(&quot;paletteer&quot;,repos = &quot;http://cran.us.r-project.or
 <pre><code>## Warning: restored &#39;readxl&#39;</code></pre>
 <pre><code>## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;tidyverse&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
 <pre><code>## package &#39;tidyverse&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;vegan&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
@@ -443,7 +443,7 @@ install.packages(&quot;paletteer&quot;,repos = &quot;http://cran.us.r-project.or
 <pre><code>## Warning: restored &#39;vegan&#39;</code></pre>
 <pre><code>## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;reshape2&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
@@ -457,35 +457,35 @@ install.packages(&quot;paletteer&quot;,repos = &quot;http://cran.us.r-project.or
 <pre><code>## Warning: restored &#39;reshape2&#39;</code></pre>
 <pre><code>## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;knitr&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
 <pre><code>## package &#39;knitr&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;ggpubr&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
 <pre><code>## package &#39;ggpubr&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;shiny&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
 <pre><code>## package &#39;shiny&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;sqldf&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
 <pre><code>## package &#39;sqldf&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <pre class="r"><code>install.packages(&quot;dplyr&quot;,repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/joshe/OneDrive/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
@@ -499,7 +499,7 @@ install.packages(&quot;paletteer&quot;,repos = &quot;http://cran.us.r-project.or
 <pre><code>## Warning: restored &#39;dplyr&#39;</code></pre>
 <pre><code>## 
 ## The downloaded binary packages are in
-##  C:\Users\joshe\AppData\Local\Temp\Rtmpq4uk38\downloaded_packages</code></pre>
+##  C:\Users\joshe\AppData\Local\Temp\RtmpsFWZFh\downloaded_packages</code></pre>
 <p>To make the packages available to use in R their libraries will have to be loaded each time R is opened.</p>
 <pre class="r"><code>library(vegan)</code></pre>
 <pre><code>## Loading required package: permute</code></pre>
