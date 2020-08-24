@@ -31,6 +31,7 @@ install.packages("knitr")
 install.packages("ggpubr")
 install.packages("shiny")
 install.packages("sqldf")
+install.packages("dplyr")
 ```
 
 ``` {r libraries}
@@ -48,6 +49,7 @@ library(ggpubr)
 library(shiny)
 library(sqldf)
 library(dplyr)
+library(data.table)
 ```
 
 ```{r Data Loading}
@@ -88,7 +90,7 @@ order_long_nona<-order_long_na[rowSums(is.na(order_long_na)) != ncol(order_long_
 ```
 
 ```{r Order Graph}
-order_long<-read_excel(here("Frost IBS Data", "Order Long.xlsx"))
+order_long<- read_excel(here("Frost IBS Data", "Order Long.xlsx"))
 
 order_long_shortened<- order_long %>% filter(order_relative_abundance >= 0.5)
 
@@ -111,6 +113,9 @@ kable(phylum_table_above_1)
 ```
 
 ```{r Diversity calculations}
+##Calculating alpha diversity within each sample 
+
+
 ##Calculating Shannon with wide data set 
 
 shannon_order<-diversity(order_wide[2:8],index="shannon",2)
@@ -126,8 +131,15 @@ invsimp_order<-diversity(order_wide[2:8],index="invsimpson",2)
 
 alpha_diversity<-data.frame(shannon_order, invsimp_order)
 
+##Merging alpha data and long form data
+alpha_diversity<-setDT(alpha_diversity, keep.rownames = TRUE)[]
+alpha_diversity<- alpha_diversity %>% mutate(name=alpha_diversity$rn)
+alpha_diversity <- alpha_diversity[,-(1),drop=FALSE]
+
+alpha_order_melted<-melt(alpha_diversity)
+
 ##Making a graphical representation
-ggplot(alpha_full, aes(x=Name, y=value, fill=variable, shape=variable))+geom_point(size=4,aes(color=variable))+facet_grid(variable~.,scales="free")+theme_bw()+theme(axis.text.x = element_text(angle = 90,hjust=1,vjust=0.5,size=8),axis.text.y=element_text(size=12),legend.position = "top")
+ggplot(alpha_order_melted, aes(x=name, y=value, fill=variable,shape=variable))+geom_point(size=4,aes(color=variable))+facet_grid(variable~.,scales="free")+theme_bw()+theme(axis.text.x = element_text(angle = 90,hjust=1,vjust=0.5,size=8),axis.text.y=element_text(size=12),legend.position = "top")
 ```
 
 ```{r Shapiro Test}
