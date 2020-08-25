@@ -2,6 +2,10 @@
 title: "Frost _IBS_Data_Analysis.Rmd"
 author: "Jonah Merriam"
 output: html_document
+ toc: true
+    toc_float: true
+    toc_depth: 10
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}
@@ -62,11 +66,14 @@ library(shiny)
 library(sqldf)
 library(dplyr)
 library(data.table)
+library(plyr)
 ```
 
 #Before working in R
 To make the data wrangling processes easier in R the excel sheet that has the original data can be manipulated. The first image is the original sheet and it has tabs for the levels Phylum-Species. The first column contains all of the hits produced for that taxonomic level while the sample columns are headed by the sample names. The second picture shows how these data can be formatted in a longer manner that will make data analysis easier. Make an individual sheet for each level Phylum-Species and save it into the designated data folder in the R repository. Then do this with the original form. Once complete read the data into R with this code below using the folder name and then the sheet name in the here() function.
 ```{r Data Loading}
+library(readxl)
+library(here)
 ##Once the data has been uploaded to 
 phylum_long<- read_excel(here("Frost IBS Data","Phylum Long.xlsx"))
 class_long<- read_excel(here("Frost IBS Data", "Class Long .xlsx"))
@@ -86,7 +93,6 @@ species_wide<- read_excel(here("Frost IBS Data", "Species Wide.xlsx"))
 #Cleaning Data
 A good first step before working with any data is to make sure it has been "cleaned". In this case that will mean that all of the titles are standardized along with the text. The code below will provide an easy way of making sure each of the data sets have a standardized 
 ```{r head(phylum_long), fig.width=4, fig.height=3, message=FALSE}
-
 ##This will put all of the characters into snake_case (lower case with words separated by underscores) and will transform all words in the listed column into lowercase.
 phylum_long<- phylum_long %>% clean_names() %>%  mutate(phylum = str_to_lower(phylum))
 
@@ -122,6 +128,8 @@ alpha_diversity <- alpha_diversity[,-(1),drop=FALSE]
 alpha_order_melted<-melt(alpha_diversity)
 
 ##Making a graphical representation
+library(tidyverse)
+
 graph_order_alpha<-ggplot(alpha_order_melted, aes(x=name, y=value, fill=variable,shape=variable))+geom_point(size=4,aes(color=variable))+facet_grid(variable~.,scales="free")+theme_bw()+theme(axis.text.x = element_text(angle = 90,hjust=1,vjust=0.5,size=8),axis.text.y=element_text(size=12),legend.position = "top")
 
 graph_order_alpha
@@ -134,6 +142,8 @@ graph_order_alpha
 
 Visualizing the data is an important step in helping better understand the relative abundance trends among samples. Below are listed a few ways to visually represent the data.
 ```{r phylum_barchart, fig.width=4, fig.height=3, message=FALSE}
+library(paletteer)
+
 phylum_long<- read_excel(here("Frost IBS Data", "Phylum Long.xlsx"))
 
 phylum_barchart<-ggplot(phylum_long, aes(y=phylum_relative_abundance,fill=phylum,x=name))+ geom_bar(stat='identity',color="black",aes(fill=phylum))+ scale_color_paletteer_d("awtools::bpalette")+ labs(title="", x="",y="Phylum Relative abundance")+theme_bw() + theme(legend.position="right",axis.text.x = element_text(angle=45, hjust=1,vjust=1,color="black"))
@@ -158,7 +168,14 @@ order_barchart_shortened
 
 Creating tables can be a useful way or organizing data that you want to group or present. The section below includes code for a few tables that were useful in representing the data from this particular analysis. Tables can be easily manipulated and changed using a variety of functions so the best tables are the ones tailored to show the data that is relevant to the analysis. 
 ```{r Displaying Data in a Table}
-##Going to want to add in the mean, median, standard deviation and alpha diversity in some way
+##Table of most abundant orders
+library(knitr)
+
+order_table_prep<-order_long %>% mutate(mean= ave(order_long$order_relative_abundance, order_long$order)) %>% mutate(sd=(ave(order_long$order_relative_abundance, order_long$order, FUN=sd)))
+
+order_table<- order_table_prep %>% filter(order_relative_abundance>= 30)
+
+kable(order_table)
 ```
 
 
@@ -168,7 +185,9 @@ Creating tables can be a useful way or organizing data that you want to group or
 
 
 ```{r Shapiro Test}
-##Will cause data to be expressed in decimals and not scientific notation 
+library(dplyr)
+
+##Will cause data to be expressed in integers instead of scientific notation 
 options(scipen=999)
 
 ##This code will run the shapiro wilks test in groups based off of the taxonomic level. This allows the same level to be gathered across samples so that they can be tested for normality. Each order will receive a P value based on if it 
@@ -184,3 +203,32 @@ order_long_normally_distributed<- order_long_shapiro %>% filter(Pvalue >= 0.05)
 ##Combing pvalue and relative abundance  
 order_agg = merge(order_long_normally_distributed, order_long, by="order")
 ```
+
+
+
+```{r}
+##Adding mean and sd to the data frame
+species_agg_test<- species_agg %>% mutate(mean= ave(species_agg$species_relative_abundance, species_agg$species)) %>% mutate(sd=(ave(species_agg$species_relative_abundance, species_agg$species, FUN=sd)))
+
+##Calculating Z-scores
+species_zscore<- species_agg_test %>% mutate(zscore = ((species_agg_test$species_relative_abundance - species_agg_test$mean)/sd))
+
+##Filtering for +/-2sd
+species_2sd <- species_zscore %>% filter(zscore >= 2 | zscore <= -2)
+
+##Filtering for k_b_m
+species_2sd_kbm<- species_2sd %>% filter(name=="k_b_m")
+
+library(kableExtra)
+kable(species_2sd_kbm)
+
+##Filtering for +/-1.5sd
+species_1.5sd <- species_zscore %>% filter(zscore >=1.5 | zscore <= -1.5)
+
+##Filtering for k_b_m
+species_1.5sd_kbm<- species_1.5sd %>% filter(name=="k_b_m")
+
+kable(head(species_1.5sd_kbm)) 
+```
+
+

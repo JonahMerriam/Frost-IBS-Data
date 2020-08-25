@@ -5,6 +5,10 @@ date: "8/10/2020"
 output:
   word_document: default
   html_document: default
+  toc: true
+    toc_float: true
+    toc_depth: 8
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}
